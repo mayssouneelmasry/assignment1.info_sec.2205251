@@ -1,0 +1,68 @@
+import tkinter as tk
+from tkinter import messagebox
+import itertools
+
+# Hardcoded username and password
+TARGET_USERNAME = "admin"
+TARGET_PASSWORD = "abcde"
+DICTIONARY = ["password", "12345", "hello", "admin" , "abcde"]
+
+# Function to perform dictionary attack
+def dictionary_attack():
+    for password in DICTIONARY:
+        if password == TARGET_PASSWORD:
+            return password
+    return None
+
+# Function to perform brute-force attack
+def brute_force_attack():
+    chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    for attempt in itertools.product(chars, repeat=5):
+        password = "".join(attempt)
+        if password == TARGET_PASSWORD:
+            return password
+    return None
+
+# Function to start the attack
+def start_attack():
+    username = username_entry.get().strip()
+    password_attempt = password_entry.get().strip()
+    
+    if not username or not password_attempt:
+        messagebox.showerror("Error", "Please enter both username and password")
+        return
+    
+    if username != TARGET_USERNAME:
+        messagebox.showerror("Error", "Invalid username")
+        return
+    
+    if password_attempt == TARGET_PASSWORD:
+        messagebox.showinfo("Success", "Password matched!")
+        return
+    
+    found_password = dictionary_attack()
+    if found_password:
+        messagebox.showinfo("Dictionary Attack", f"Password found - {found_password}")
+    else:
+        found_password = brute_force_attack()
+        if found_password:
+            messagebox.showinfo("Brute Force Attack", f"Password found - {found_password}")
+        else:
+            messagebox.showerror("Failure", "Password not found")
+
+# GUI Setup
+root = tk.Tk()
+root.title("Password Cracker")
+root.geometry("300x200")
+
+tk.Label(root, text="Username:").pack()
+username_entry = tk.Entry(root)
+username_entry.pack()
+
+tk.Label(root, text="Password:").pack()
+password_entry = tk.Entry(root, show="*")
+password_entry.pack()
+
+tk.Button(root, text="Start Attack", command=start_attack).pack()
+
+root.mainloop()
